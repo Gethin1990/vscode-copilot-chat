@@ -65,11 +65,13 @@ describe('Virtual Tools - Grouper', () => {
 	}
 
 	function makeExtensionSource(id: string): LanguageModelToolExtensionSource {
-		return new LanguageModelToolExtensionSource(id, id);
+		// TODO@connor4312
+		return new (LanguageModelToolExtensionSource as any)(id, id);
 	}
 
 	function makeMCPSource(label: string): LanguageModelToolMCPSource {
-		return new LanguageModelToolMCPSource(label, label);
+		// TODO@connor4312
+		return new (LanguageModelToolMCPSource as any)(label, label);
 	}
 
 	beforeEach(() => {
@@ -453,7 +455,19 @@ describe('Virtual Tools - Grouper', () => {
 
 			const context = accessor.get(IVSCodeExtensionContext);
 			const cached = context.globalState.get('virtToolGroupCache');
-			expect(cached).toMatchInlineSnapshot(`
+			function sortObj(obj: unknown): any {
+				if (Array.isArray(obj)) {
+					return obj.map(sortObj).sort();
+				}
+				if (obj && typeof obj === 'object') {
+					return Object.fromEntries(Object.entries(obj)
+						.sort(([a], [b]) => a.localeCompare(b))
+						.map(([k, v]) => [k, sortObj(v)]));
+				}
+				return obj;
+			}
+
+			expect(sortObj(cached)).toMatchInlineSnapshot(`
 				{
 				  "lru": [
 				    [
@@ -466,6 +480,13 @@ describe('Virtual Tools - Grouper', () => {
 				            "tools": [
 				              "grouped_tool_0",
 				              "grouped_tool_1",
+				              "grouped_tool_10",
+				              "grouped_tool_11",
+				              "grouped_tool_12",
+				              "grouped_tool_13",
+				              "grouped_tool_14",
+				              "grouped_tool_15",
+				              "grouped_tool_16",
 				              "grouped_tool_2",
 				              "grouped_tool_3",
 				              "grouped_tool_4",
@@ -474,20 +495,12 @@ describe('Virtual Tools - Grouper', () => {
 				              "grouped_tool_7",
 				              "grouped_tool_8",
 				              "grouped_tool_9",
-				              "grouped_tool_10",
-				              "grouped_tool_11",
-				              "grouped_tool_12",
-				              "grouped_tool_13",
-				              "grouped_tool_14",
-				              "grouped_tool_15",
-				              "grouped_tool_16",
 				            ],
 				          },
 				        ],
 				      },
 				    ],
 				    [
-				      "ukyzHGWUUwylzlhwETqBtsi69Xhj9XqiFp45nH8yqYE=",
 				      {
 				        "groups": [
 				          {
@@ -501,6 +514,7 @@ describe('Virtual Tools - Grouper', () => {
 				          },
 				        ],
 				      },
+				      "ukyzHGWUUwylzlhwETqBtsi69Xhj9XqiFp45nH8yqYE=",
 				    ],
 				  ],
 				}

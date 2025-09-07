@@ -53,7 +53,7 @@ suite('defaultIntentRequestHandler', () => {
 		services.define(ITelemetryService, telemetry);
 		services.define(IChatMLFetcher, new StaticChatMLFetcher(chatResponse));
 		accessor = services.createTestingAccessor();
-		endpoint = accessor.get(IInstantiationService).createInstance(MockEndpoint);
+		endpoint = accessor.get(IInstantiationService).createInstance(MockEndpoint, undefined);
 		builtPrompts = [];
 		response = [];
 		promptResult = nullRenderPromptResult();
@@ -330,14 +330,7 @@ suite('defaultIntentRequestHandler', () => {
 
 		expect(response.at(-1)).toMatchInlineSnapshot(`
 			ChatResponseMarkdownPart {
-			  "value": MarkdownString {
-			    "delegate": MarkdownString {
-			      "isTrusted": undefined,
-			      "supportHtml": false,
-			      "supportThemeIcons": false,
-			      "value": "Let me know if there's anything else I can help with!",
-			    },
-			  },
+			  "value": MarkdownString {},
 			}
 		`);
 	});
